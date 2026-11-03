@@ -1003,6 +1003,22 @@ def test_slice():
         text[::-1]
 
 
+def test_negative_index():
+    text = Text.from_markup("[red]foo [bold]bar[/red] baz[/bold]")
+    assert text[-1] == Text("z", spans=[Span(0, 1, "bold")])
+    assert text[-7] == Text("b", spans=[Span(0, 1, "red"), Span(0, 1, "bold")])
+    assert text[-len(text)] == Text("f", spans=[Span(0, 1, "red")])
+    assert text[-1] == text[len(text) - 1]
+    assert text[-7] == text[4]
+    assert text[-len(text)] == text[0]
+
+    with pytest.raises(IndexError):
+        text[-len(text) - 1]
+
+    with pytest.raises(IndexError):
+        Text("")[-1]
+
+
 def test_wrap_invalid_style():
     # https://github.com/textualize/rich/issues/987
     console = Console(width=100, color_system="truecolor")
